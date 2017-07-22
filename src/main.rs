@@ -1,12 +1,25 @@
 use std::ffi::CString;
+use std::env;
+use std::process::Command;
 
 extern crate winapi;
 extern crate user32;
 
+
 fn main() {
-    
-    unsafe {      
-        user32::EnumWindows(Some(enumerate_callback), 0i64);        
+    match env::args().nth(1) {
+        Some(arg) => {
+            Command::new("explorer")
+                .arg(arg)
+                .spawn()
+                .expect("couldn't open file???")
+                .wait()
+                .expect("child didn't terminate???");
+            unsafe {
+                user32::EnumWindows(Some(enumerate_callback), 0i64);
+            }
+        }
+        _ => println!("Please come back with the file you want to open with VLC"),
     }
 }
 
